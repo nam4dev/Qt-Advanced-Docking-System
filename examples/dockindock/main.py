@@ -2,18 +2,23 @@ import sys
 import os
 import atexit
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
-from PyQt5.QtCore import Qt
-from PyQtAds import QtAds
+from qtpy.QtWidgets import QApplication, QMainWindow, QLabel
+from qtpy.QtCore import Qt
+# from PyQtAds import QtAds
 
-from perspectives import PerspectivesManager
+try:
+    from PyQtAds import QtAds
+except ImportError:
+    import pyside6_qtads as QtAds
+
+# from perspectives import PerspectivesManager
 from dockindock import DockInDockWidget
     
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         
-        self.perspectives_manager = PerspectivesManager("persist")
+        self.perspectives_manager = None #PerspectivesManager("persist")
         self.resize(400, 400)
         self.dock_manager = DockInDockWidget(self, self.perspectives_manager, can_create_new_groups=True)
         self.setCentralWidget(self.dock_manager)
@@ -56,12 +61,13 @@ class MainWindow(QMainWindow):
 
                 previous_dock_widget = sub_group.addTabWidget(l, f"SubInner {j}/{i}", previous_dock_widget)
                 
-        self.perspectives_manager.loadPerspectives()
+        # self.perspectives_manager.loadPerspectives()
         
         atexit.register(self.cleanup)
         
     def cleanup(self):
-        self.perspectives_manager.savePerspectives()
+        pass
+        # self.perspectives_manager.savePerspectives()
 
         
 if __name__ == '__main__':

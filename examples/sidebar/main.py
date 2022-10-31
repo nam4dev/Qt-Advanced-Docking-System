@@ -1,22 +1,24 @@
 import os
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import Qt, QMargins
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QPlainTextEdit
+from qtpy import uic
+from qtpy.QtCore import Qt, QMargins
+from qtpy.QtWidgets import QApplication, QLabel, QVBoxLayout, QPlainTextEdit, QMainWindow
 
-from PyQtAds import QtAds
+try:
+    from PyQtAds import QtAds
+except ImportError:
+    import pyside6_qtads as QtAds
+
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'MainWindow.ui')
-MainWindowUI, MainWindowBase = uic.loadUiType(UI_FILE)
 
 
-class MainWindow(MainWindowUI, MainWindowBase):
+class MainWindow(QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
-        self.setupUi(self)
+        uic.loadUi(UI_FILE, self)
  
         # Create the dock manager. Because the parent parameter is a QMainWindow
         # the dock manager registers itself as the central widget.

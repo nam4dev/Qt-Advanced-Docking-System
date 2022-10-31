@@ -1,23 +1,26 @@
 import sys
 import os
 
-from PyQt5 import uic
-from PyQt5.QtCore import Qt, QSignalBlocker
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QComboBox, QTableWidget,
+from qtpy import uic
+from qtpy.QtCore import Qt, QSignalBlocker
+from qtpy.QtWidgets import (QApplication, QMainWindow, QLabel, QComboBox, QTableWidget,
                              QAction, QWidgetAction, QSizePolicy, QInputDialog)
-from PyQt5.QtGui import QCloseEvent
-from PyQtAds import QtAds
+from qtpy.QtGui import QCloseEvent
 
-    
+
+try:
+    from PyQtAds import QtAds
+except ImportError:
+    import pyside6_qtads as QtAds
+
+
 UI_FILE = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
-MainWindowUI, MainWindowBase = uic.loadUiType(UI_FILE)
 
 
-class CMainWindow(MainWindowUI, MainWindowBase):
+class CMainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        
-        self.setupUi(self)
+        uic.loadUi(UI_FILE, self)
 
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.OpaqueSplitterResize, True)
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.XmlCompressionEnabled, False)
@@ -77,12 +80,15 @@ class CMainWindow(MainWindowUI, MainWindowBase):
         self.perspective_combo_box = QComboBox(self)
         self.perspective_combo_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.perspective_combo_box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.perspective_combo_box.activated[str].connect(self.dock_manager.openPerspective)
+        self.perspective_combo_box.activated.connect(self.onPerspectiveActivated)
         perspective_list_action.setDefaultWidget(self.perspective_combo_box)
         self.toolBar.addSeparator()
         self.toolBar.addAction(perspective_list_action)
         self.toolBar.addAction(save_perspective_action)
-        
+
+    def onPerspectiveActivated(self, index):
+        self.dock_manager.openPerspective(self.dock_manager.perspectiveNames()[index])
+
     def savePerspective(self):
         perspective_name, ok = QInputDialog.getText(self, "Save Perspective", "Enter unique name:")
         if not perspective_name or not ok:

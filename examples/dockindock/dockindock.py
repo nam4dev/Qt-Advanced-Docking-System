@@ -1,12 +1,18 @@
 import sys
 
-from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QMessageBox,
+from qtpy.QtWidgets import (QApplication, QWidget, QVBoxLayout, QMessageBox,
                              QInputDialog, QMenu, QLineEdit)
-from PyQt5.QtGui import QIcon
-from PyQtAds import QtAds
+from qtpy.QtGui import QIcon
 
 from dockindockmanager import DockInDockManager
-from perspectiveactions import LoadPerspectiveAction, RemovePerspectiveAction
+# from perspectiveactions import LoadPerspectiveAction, RemovePerspectiveAction
+
+
+try:
+    from PyQtAds import QtAds
+except ImportError:
+    import pyside6_qtads as QtAds
+
 
 
 class DockInDockWidget(QWidget):

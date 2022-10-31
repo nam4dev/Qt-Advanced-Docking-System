@@ -1,24 +1,27 @@
 import os
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import Qt, QTimer, QDir, QSignalBlocker
-from PyQt5.QtGui import QCloseEvent, QIcon
-from PyQt5.QtWidgets import (QApplication, QLabel, QCalendarWidget, QFrame, QTreeView,
+from qtpy import uic
+from qtpy.QtCore import Qt, QTimer, QDir, QSignalBlocker
+from qtpy.QtGui import QCloseEvent, QIcon
+from qtpy.QtWidgets import (QApplication, QLabel, QCalendarWidget, QFrame, QTreeView,
                              QTableWidget, QFileSystemModel, QPlainTextEdit, QToolBar,
-                             QWidgetAction, QComboBox, QAction, QSizePolicy, QInputDialog)
+                             QWidgetAction, QComboBox, QAction, QSizePolicy, QInputDialog,
+                             QMainWindow)
 
-from PyQtAds import QtAds
+try:
+    from PyQtAds import QtAds
+except ImportError:
+    import pyside6_qtads as QtAds
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
-MainWindowUI, MainWindowBase = uic.loadUiType(UI_FILE)
+
     
-class MainWindow(MainWindowUI, MainWindowBase):
+class MainWindow(QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
-        self.setupUi(self)
+        uic.loadUi(UI_FILE, self)
  
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.OpaqueSplitterResize, True)
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.XmlCompressionEnabled, False)
@@ -76,11 +79,14 @@ class MainWindow(MainWindowUI, MainWindowBase):
         self.perspective_combobox = QComboBox(self)
         self.perspective_combobox.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.perspective_combobox.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.perspective_combobox.activated[str].connect(self.dock_manager.openPerspective)
+        self.perspective_combobox.activated.connect(self.onPerspectiveActivated)
         perspective_list_action.setDefaultWidget(self.perspective_combobox)
         self.toolBar.addSeparator()
         self.toolBar.addAction(perspective_list_action)
         self.toolBar.addAction(save_perspective_action)
+
+    def onPerspectiveActivated(self, index):
+        self.dock_manager.openPerspective(self.dock_manager.perspectiveNames()[index])
         
     def save_perspective(self):
         perspective_name, ok = QInputDialog.getText(self, "Save Perspective", "Enter Unique name:")
