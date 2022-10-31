@@ -9,7 +9,7 @@ from qtpy.QtWidgets import QApplication, QLabel, QMainWindow
 try:
     from PyQtAds import QtAds
 except ImportError:
-    import pyside6_qtads as QtAds
+    import PySide6QtAds as QtAds
 
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'MainWindow.ui')

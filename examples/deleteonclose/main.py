@@ -7,7 +7,7 @@ from qtpy.QtWidgets import QMainWindow, QAction, QTextEdit, QApplication, QMenuB
 try:
     from PyQtAds import QtAds
 except ImportError:
-    import pyside6_qtads as QtAds
+    import PySide6QtAds as QtAds
 
 
 class MainWindow(QMainWindow):

@@ -7,7 +7,7 @@ from qtpy.QtCore import QSettings
 try:
     from PyQtAds import QtAds
 except ImportError:
-    import pyside6_qtads as QtAds
+    import PySide6QtAds as QtAds
 
 
 
