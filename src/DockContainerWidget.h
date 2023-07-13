@@ -108,7 +108,7 @@ protected:
 	 * if the given DockWidget is pinnable. If it is not pinnable, the
 	 * function returns a nullptr.
 	 */
-	CAutoHideDockContainer* createAutoHideContainerIfPinnable(SideBarLocation area, CDockWidget* DockWidget);
+	// CAutoHideDockContainer* createAutoHideContainerIfPinnable(SideBarLocation area, CDockWidget* DockWidget);
 
 	/**
 	 * Helper function for creation of the root splitter

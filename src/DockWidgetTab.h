@@ -182,7 +182,7 @@ public:
 	 * Returns true, if the tab has been clicked and the mouse is currently
 	 * pressed.
 	 */
-	bool mousePressed() const;
+	// bool mousePressed() const;
 
 public Q_SLOTS:
 	virtual void setVisible(bool visible) override;
