@@ -1,9 +1,13 @@
 import sys
 
-from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QMessageBox,
+from qtpy.QtWidgets import (QApplication, QWidget, QVBoxLayout, QMessageBox,
                              QInputDialog, QMenu, QLineEdit)
-from PyQt5.QtGui import QIcon
-import PyQtAds as QtAds
+from qtpy.QtGui import QIcon
+
+try:
+    from PyQtAds import QtAds
+except ImportError:
+    import PySide6QtAds as QtAds
 
 from dockindockmanager import DockInDockManager
 from perspectiveactions import LoadPerspectiveAction, RemovePerspectiveAction

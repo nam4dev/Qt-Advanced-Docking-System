@@ -3,32 +3,30 @@ import logging
 import os
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import (QCoreApplication, QDir, Qt, QSettings, QSignalBlocker,
-                          QRect, QPoint, qDebug, qInstallMessageHandler,
-                          QtDebugMsg, QtInfoMsg, QtWarningMsg,
-                          QtCriticalMsg, QtFatalMsg, QSize)
-from PyQt5.QtGui import (QGuiApplication, QIcon, QCloseEvent)
-from PyQt5.QtWidgets import (QCalendarWidget, QFileSystemModel, QFrame, QLabel,
+from PySide6.QtUiTools import loadUiType
+from qtpy.QtCore import (QCoreApplication, QDir, Qt, QSettings, QSignalBlocker,
+                          QRect, QPoint, qDebug, qInstallMessageHandler, QSize)
+from qtpy.QtGui import (QGuiApplication, QIcon, QCloseEvent)
+from qtpy.QtWidgets import (QCalendarWidget, QFileSystemModel, QFrame, QLabel,
                              QMenu, QTreeView, QAction, QWidgetAction,
                              QComboBox, QStyle, QSizePolicy, QInputDialog, QMenu,
                              QToolButton, QWidget, QPlainTextEdit,
                              QTableWidget, QTableWidgetItem, QApplication,
                              QMessageBox)
 try:
-    from PyQt5.QAxContainer import QAxWidget
+    from qtpy.QAxContainer import QAxWidget
 except ImportError:
     ACTIVEX_AVAILABLE = False
 else:
     ACTIVEX_AVAILABLE = True
 
-from PyQtAds import QtAds
+import PySide6QtAds as QtAds
 
 import rc  # pyrcc5 demo.qrc -o rc.py
 from status_dialog import CStatusDialog
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
-MainWindowUI, MainWindowBase = uic.loadUiType(UI_FILE)
+MainWindowUI, MainWindowBase = loadUiType(UI_FILE)
 
 
 class _State:
@@ -64,7 +62,7 @@ def append_feature_string_to_window_title(dock_widget: QtAds.CDockWidget):
 
 def svg_icon(filename: str):
     '''Helper function to create an SVG icon'''
-    # This is a workaround, because because in item views SVG icons are not
+    # This is a workaround, because in item views SVG icons are not
     # properly scaled and look blurry or pixelate
     icon = QIcon(filename)
     icon.addPixmap(icon.pixmap(92))
@@ -163,7 +161,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
         # area close button closes the active tab
         # QtAds.CDockManager.setConfigFlags(QtAds.CDockManager.DockAreaHasCloseButton
                                           # | QtAds.CDockManager.DockAreaCloseButtonClosesTab)
-        self.perspective_combo_box.activated[str].connect(self.dock_manager.openPerspective)
+        self.perspective_combo_box.activated[int].connect(self.dock_manager.openPerspective)
         
         self.create_content()
         # Default window geometry - center on screen
@@ -337,19 +335,6 @@ class MainWindow(MainWindowUI, MainWindowBase):
     def on_actionRestoreState_triggered(self, state: bool):
         qDebug("MainWindow::on_action_restore_state_triggered")
         self.restore_state()
-        
-    def save_perspective(self):
-        perspective_name, ok = QInputDialog.getText(self, "Save perspective",
-                                                    "Enter unique name:")
-        
-        if ok and perspective_name:
-            self.dock_manager.addPerspective(perspective_name)
-            _ = QSignalBlocker(self.perspective_combo_box)
-            self.perspective_combo_box.clear()
-            self.perspective_combo_box.addItems(self.dock_manager.perspectiveNames())
-            self.perspective_combo_box.setCurrentText(perspective_name)
-            
-            self.save_perspectives()
             
     def on_view_toggled(self, open: bool):
         dock_widget = self.sender()
@@ -584,16 +569,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
 
 
 def my_message_output(type, context, msg):
-    if type == QtDebugMsg:
-        print("Debug: {} ({}:{}, {})".format(msg, context.file, context.line, context.function))
-    elif type == QtInfoMsg:
-        print("Info: {} ({}:{}, {})".format(msg, context.file, context.line, context.function))
-    elif type == QtWarningMsg:
-        print("Warning: {} ({}:{}, {})".format(msg, context.file, context.line, context.function))
-    elif type == QtCriticalMsg:
-        print("Critical: {} ({}:{}, {})".format(msg, context.file, context.line, context.function))
-    elif type == QtFatalMsg:
-        print("Fatal: {} ({}:{}, {})".format(msg, context.file, context.line, context.function))
+    print(f"{type}: {msg} ({context.file}:{context.line}, {context.function})")
 
 
 if __name__ == '__main__':

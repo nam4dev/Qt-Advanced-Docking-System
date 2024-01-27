@@ -1,17 +1,18 @@
 import os
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import Qt, QTimer, QDir, QSignalBlocker
-from PyQt5.QtGui import QCloseEvent, QIcon
-from PyQt5.QtWidgets import (QApplication, QLabel, QCalendarWidget, QFrame, QTreeView,
+from PySide6.QtUiTools import loadUiType
+from qtpy.QtCore import Qt, QTimer, QDir, QSignalBlocker
+from qtpy.QtGui import QCloseEvent, QIcon
+from qtpy.QtWidgets import (QApplication, QLabel, QCalendarWidget, QFrame, QTreeView,
                              QTableWidget, QFileSystemModel, QPlainTextEdit, QToolBar,
                              QWidgetAction, QComboBox, QAction, QSizePolicy, QInputDialog)
 
-import PyQtAds as QtAds
+import PySide6QtAds as QtAds
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
-MainWindowUI, MainWindowBase = uic.loadUiType(UI_FILE)
+MainWindowUI, MainWindowBase = loadUiType(UI_FILE)
+
     
 class MainWindow(MainWindowUI, MainWindowBase):
 
@@ -23,6 +24,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.OpaqueSplitterResize, True)
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.XmlCompressionEnabled, False)
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.FocusHighlighting, True)
+        QtAds.CDockManager.setAutoHideConfigFlags(QtAds.CDockManager.DefaultAutoHideConfig)
         self.dock_manager = QtAds.CDockManager(self)
         
         # Set central widget
@@ -42,7 +44,8 @@ class MainWindow(MainWindowUI, MainWindowBase):
         table_dock_widget.setMinimumSizeHintMode(QtAds.CDockWidget.MinimumSizeHintFromDockWidget)
         table_dock_widget.resize(250, 150)
         table_dock_widget.setMinimumSize(200, 150)
-        table_area = self.dock_manager.addDockWidget(QtAds.DockWidgetArea.LeftDockWidgetArea, table_dock_widget)
+        container = self.dock_manager.addAutoHideDockWidget(QtAds.SideBarLocation.SideBarLeft, table_dock_widget)
+        container.setSize(480)
         self.menuView.addAction(table_dock_widget.toggleViewAction())
         
         table = QTableWidget()
@@ -53,7 +56,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
         table_dock_widget.setMinimumSizeHintMode(QtAds.CDockWidget.MinimumSizeHintFromDockWidget)
         table_dock_widget.resize(250, 150)
         table_dock_widget.setMinimumSize(200, 150)
-        table_area = self.dock_manager.addDockWidget(QtAds.DockWidgetArea.BottomDockWidgetArea, table_dock_widget, table_area)
+        self.dock_manager.addAutoHideDockWidget(QtAds.SideBarLocation.SideBarLeft, table_dock_widget)
         self.menuView.addAction(table_dock_widget.toggleViewAction())
 
         properties_table = QTableWidget()

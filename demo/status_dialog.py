@@ -1,11 +1,13 @@
 import os
 import sys
 
-from PyQt5 import uic
-import PyQtAds as QtAds
+from PySide6.QtUiTools import loadUiType
+import PySide6QtAds as QtAds
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'StatusDialog.ui')
-StatusDialogUI, StatusDialogBase = uic.loadUiType(UI_FILE)
+
+StatusDialogUI, StatusDialogBase = loadUiType(UI_FILE)
+
 
 class CStatusDialog(StatusDialogUI, StatusDialogBase):
     

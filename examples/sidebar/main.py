@@ -1,28 +1,31 @@
 import os
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import Qt, QMargins
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QPlainTextEdit
+from PySide6.QtUiTools import loadUiType
+from qtpy.QtCore import Qt
+from qtpy.QtWidgets import QApplication, QLabel, QVBoxLayout, QPlainTextEdit
 
-import PyQtAds as QtAds
+try:
+    from PyQtAds import QtAds
+except ImportError:
+    import PySide6QtAds as QtAds
+
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'MainWindow.ui')
-MainWindowUI, MainWindowBase = uic.loadUiType(UI_FILE)
+MainWindowUI, MainWindowBase = loadUiType(UI_FILE)
 
 
 class MainWindow(MainWindowUI, MainWindowBase):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self.setupUi(self)
  
         # Create the dock manager. Because the parent parameter is a QMainWindow
         # the dock manager registers itself as the central widget.
-        layout = QVBoxLayout(self.dockContainer);
-        layout.setContentsMargins(QMargins(0, 0, 0, 0))
-        self.dock_manager = QtAds.CDockManager(self.dockContainer)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.dock_manager = QtAds.CDockManager(self)
         layout.addWidget(self.dock_manager)
         
         # Create example content label - this can be any application specific

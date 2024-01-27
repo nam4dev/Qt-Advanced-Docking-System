@@ -1,7 +1,13 @@
-from PyQt5.QtWidgets import QAction, QMenu, QInputDialog, QLineEdit
-from PyQt5.QtCore import QSettings
+from PySide6.QtWidgets import QMessageBox
+from qtpy.QtWidgets import QAction, QMenu, QInputDialog, QLineEdit
+from qtpy.QtCore import QSettings
 
-import PyQtAds as QtAds
+try:
+    from PyQtAds import QtAds
+except ImportError:
+    import PySide6QtAds as QtAds
+
+
 
 CHILD_PREFIX = "Child-"
 
@@ -101,7 +107,7 @@ class DockInDockManager(QtAds.CDockManager):
     def removePerspectivesRec(self, settings: QSettings) -> None:
         children = self.allManagers(True, True)
         
-        for mgr in children:
+        for child in children:
             child.removePerspectives(child.perspectiveNames())
             
     @staticmethod

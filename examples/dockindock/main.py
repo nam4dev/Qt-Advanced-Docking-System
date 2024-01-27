@@ -8,6 +8,7 @@ import PyQtAds as QtAds
 
 from perspectives import PerspectivesManager
 from dockindock import DockInDockWidget
+
     
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
