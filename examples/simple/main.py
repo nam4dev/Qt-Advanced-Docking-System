@@ -1,15 +1,18 @@
 import os
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QApplication, QLabel
+from qtpy.QtUiTools import loadUiType
+from qtpy.QtCore import Qt, QTimer
+from qtpy.QtGui import QCloseEvent
+from qtpy.QtWidgets import QApplication, QLabel
 
-import PyQtAds as QtAds
+try:
+    import PyQtAds as QtAds
+except (ImportError, NameError, Exception):
+    import PySide6QtAds as QtAds
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'MainWindow.ui')
-MainWindowUI, MainWindowBase = uic.loadUiType(UI_FILE)
+MainWindowUI, MainWindowBase = loadUiType(UI_FILE)
 
 
 class MainWindow(MainWindowUI, MainWindowBase):
@@ -34,7 +37,6 @@ class MainWindow(MainWindowUI, MainWindowBase):
         # as the dock widget content
         dock_widget = QtAds.CDockWidget("Label 1")
         dock_widget.setWidget(l)
-        
 
         # Add the toggleViewAction of the dock widget to the menu to give
         # the user the possibility to show the dock widget if it has been closed
@@ -49,4 +51,4 @@ if __name__ == '__main__':
     
     w = MainWindow()
     w.show()
-    app.exec_()
+    app.exec()

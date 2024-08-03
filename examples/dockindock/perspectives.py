@@ -3,13 +3,18 @@ import tempfile
 import shutil
 import atexit
 
-from PyQt5.QtCore import pyqtSignal, QSettings, QObject
-import PyQtAds as QtAds
+from qtpy.QtCore import Signal, QSettings, QObject
+
+try:
+    import PyQtAds as QtAds
+except (ImportError, NameError, Exception):
+    import PySide6QtAds as QtAds
 
 from dockindockmanager import DockInDockManager
 from dockindock import DockInDockWidget
 
 GROUP_PREFIX = "Group"
+
 
 def findWidget(name, managers: 'list[DockInDockManager]') -> QtAds.CDockWidget:
         for mgr in managers:
@@ -29,9 +34,9 @@ class PerspectiveInfo:
 
 
 class PerspectivesManager(QObject):
-    perspectivesListChanged = pyqtSignal()
-    openingPerspective = pyqtSignal()
-    openedPerspective = pyqtSignal()
+    perspectivesListChanged = Signal()
+    openingPerspective = Signal()
+    openedPerspective = Signal()
 
     def __init__(self, perspectives_folder):
         super().__init__()
@@ -65,7 +70,7 @@ class PerspectivesManager(QObject):
             
         self.perspectivesListChanged.emit()
                 
-    def openPerspective(name: str, widget: DockInDockWidget) -> None:
+    def openPerspective(self, name: str, widget: DockInDockWidget) -> None:
         assert widget.getTopLevelDockWidget() == widget
         
         if self.__perspectives_folder:

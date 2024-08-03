@@ -1,9 +1,13 @@
 import sys
 
-from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QMessageBox,
+from qtpy.QtWidgets import (QApplication, QWidget, QVBoxLayout, QMessageBox,
                              QInputDialog, QMenu, QLineEdit)
-from PyQt5.QtGui import QIcon
-import PyQtAds as QtAds
+from qtpy.QtGui import QIcon
+
+try:
+    import PyQtAds as QtAds
+except (ImportError, NameError, Exception):
+    import PySide6QtAds as QtAds
 
 from dockindockmanager import DockInDockManager
 from perspectiveactions import LoadPerspectiveAction, RemovePerspectiveAction
@@ -92,9 +96,9 @@ class DockInDockWidget(QWidget):
 
             # find widget's parent:
             for dock_widget in top_level_widget.getManager().allDockWidgets(True, True):
-                if dockwidget[1].widget() == widget_to_remove:
-                    dockwidget[0].removeDockWidget(dockwidget[1])
-                    del dockwidget[1]
+                if dock_widget[1].widget() == widget_to_remove:
+                    dock_widget[0].removeDockWidget(dock_widget[1])
+                    del dock_widget[1]
                     # delete widgetToRemove; automatically deleted when dockWidget is deleted
                     widget_to_remove = None
                     break
@@ -154,7 +158,7 @@ class DockInDockWidget(QWidget):
             for name in perspectives_names:
                 remove.addAction(RemovePerspectiveAction(remove, name, self))
                 
-    def setNewPerspectiveDefaultName(default_name: str) -> None:
+    def setNewPerspectiveDefaultName(self, default_name: str) -> None:
         self.__new_perspective_default_name = default_name
         
     def createPerspective(self) -> None:

@@ -2,13 +2,18 @@ import sys
 import os
 import atexit
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
-from PyQt5.QtCore import Qt
-import PyQtAds as QtAds
+from qtpy.QtWidgets import QApplication, QMainWindow, QLabel
+from qtpy.QtCore import Qt
+
+try:
+    import PyQtAds as QtAds
+except (ImportError, NameError, Exception):
+    import PySide6QtAds as QtAds
 
 from perspectives import PerspectivesManager
 from dockindock import DockInDockWidget
-    
+
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -69,4 +74,4 @@ if __name__ == '__main__':
     
     w = MainWindow()
     w.show()
-    app.exec_()
+    app.exec()

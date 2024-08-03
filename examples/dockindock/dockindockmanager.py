@@ -1,9 +1,13 @@
-from PyQt5.QtWidgets import QAction, QMenu, QInputDialog, QLineEdit
-from PyQt5.QtCore import QSettings
+from qtpy.QtWidgets import QAction, QMenu, QInputDialog, QLineEdit
+from qtpy.QtCore import QSettings
 
-import PyQtAds as QtAds
+try:
+    import PyQtAds as QtAds
+except (ImportError, NameError, Exception):
+    import PySide6QtAds as QtAds
 
 CHILD_PREFIX = "Child-"
+
 
 class DockInDockManager(QtAds.CDockManager):
     def __init__(self, parent: 'DockInDockWidget'):

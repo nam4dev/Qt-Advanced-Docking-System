@@ -1,10 +1,13 @@
 import sys
 
-import PyQtAds as QtAds
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtCore import (qDebug, pyqtSlot, QObject, pyqtSignal)
-from PyQt5.QtWidgets import (QMainWindow, QAction, QTextEdit, QApplication,
-                             QMenuBar)
+from qtpy.QtGui import QCloseEvent
+from qtpy.QtCore import (qDebug, Slot, QObject, Signal)
+from qtpy.QtWidgets import (QMainWindow, QAction, QTextEdit, QApplication, QMenuBar)
+
+try:
+    import PyQtAds as QtAds
+except (ImportError, NameError, Exception):
+    import PySide6QtAds as QtAds
 
 
 class MainWindow(QMainWindow):
@@ -70,4 +73,4 @@ if __name__ == '__main__':
     action.triggered.connect(on_action2_triggered)
     
     w.show()
-    app.exec_()
+    app.exec()
