@@ -4,7 +4,10 @@ os.environ['QT_QUICK_BACKEND'] = 'software'
 os.environ['QT_WEBENGINE_DISABLE_GPU'] = '1'
 
 import sys
+import win32con
+import win32gui
 
+from qtpy.QtUiTools import loadUiType
 import win32con
 import win32gui
 from qtpy.QtUiTools import loadUiType
@@ -15,9 +18,10 @@ from qtpy import QtWidgets
 from qtpy.QtWebEngineWidgets import QWebEngineView
 from qtpy.QtWebEngineWidgets import QWebEngineSettings
 
-import PySide6QtAds as QtAds
-
-Qt = QtCore.Qt
+try:
+    import PyQtAds as QtAds
+except (ImportError, NameError, Exception):
+    import PySide6QtAds as QtAds
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
 MainWindowUI, MainWindowBase = loadUiType(UI_FILE)
@@ -37,7 +41,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.eConfigFlag.EnableFloatingAsWindow, True)
         QtAds.CDockManager.setAutoHideConfigFlags(QtAds.CDockManager.eAutoHideFlag.DefaultAutoHideConfig)
         self.dock_manager = QtAds.CDockManager(self)
-        
+
         # Set central widget
         text_edit = QtWidgets.QPlainTextEdit()
         text_edit.setPlaceholderText("This is the central editor. Enter your text here.")
@@ -45,7 +49,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
         central_dock_widget.setWidget(text_edit)
         central_dock_area = self.dock_manager.setCentralWidget(central_dock_widget)
         central_dock_area.setAllowedAreas(QtAds.DockWidgetArea.OuterDockAreas)
-        
+
         # create other dock widgets
         table = QtWidgets.QTableWidget()
         table.setColumnCount(3)
@@ -97,7 +101,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
 
         self.dock_manager.addAutoHideDockWidget(QtAds.SideBarLocation.SideBarBottom, self.webview_dock_widget)
         self.menuView.addAction(self.webview_dock_widget.toggleViewAction())
-        
+
         self.create_perspective_ui()
 
         # self.webview_dock_widget.topLevelChanged.connect(self.to_single_window)
@@ -138,7 +142,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
 
         # Re-show the window to apply new styles
         win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
-        
+
     def create_perspective_ui(self):
         save_perspective_action = QtWidgets.QAction("Create Perspective", self)
         save_perspective_action.triggered.connect(self.save_perspective)
@@ -151,18 +155,18 @@ class MainWindow(MainWindowUI, MainWindowBase):
         self.toolBar.addSeparator()
         self.toolBar.addAction(perspective_list_action)
         self.toolBar.addAction(save_perspective_action)
-        
+
     def save_perspective(self):
         perspective_name, ok = QtWidgets.QInputDialog.getText(self, "Save Perspective", "Enter Unique name:")
         if not ok or not perspective_name:
             return
-        
+
         self.dock_manager.addPerspective(perspective_name)
         blocker = QtCore.QSignalBlocker(self.perspective_combobox)
         self.perspective_combobox.clear()
         self.perspective_combobox.addItems(self.dock_manager.perspectiveNames())
         self.perspective_combobox.setCurrentText(perspective_name)
-        
+
     def closeEvent(self, event: QtGui.QCloseEvent):
         self.dock_manager.deleteLater()
         super().closeEvent(event)
@@ -172,7 +176,6 @@ if __name__ == '__main__':
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
 
     app = QtWidgets.QApplication(sys.argv)
-    
     w = MainWindow()
     w.show()
-    app.exec_()
+    app.exec()

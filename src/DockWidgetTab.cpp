@@ -337,7 +337,6 @@ bool DockWidgetTabPrivate::startFloating(eDragState DraggingState)
 
     if (DraggingFloatingWidget == DraggingState)
     {
-
         FloatingWidget->startFloating(DragStartMousePosition, Size, DraggingFloatingWidget, _this);
         auto DockManager = DockWidget->dockManager();
     	auto Overlay = DockManager->containerOverlay();
@@ -796,6 +795,13 @@ bool CDockWidgetTab::event(QEvent *e)
 		d->updateIcon();
 	}
 	return Super::event(e);
+}
+
+
+//============================================================================
+eDragState CDockWidgetTab::dragState() const
+{
+	return d->DragState;
 }
 
 

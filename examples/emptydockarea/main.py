@@ -1,16 +1,20 @@
 import sys
 import os
 
-from PyQt5 import uic
-from PyQt5.QtCore import Qt, QSignalBlocker
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QComboBox, QTableWidget,
+from qtpy.QtUiTools import loadUiType
+from qtpy.QtCore import Qt, QSignalBlocker
+from qtpy.QtWidgets import (QApplication, QMainWindow, QLabel, QComboBox, QTableWidget,
                              QAction, QWidgetAction, QSizePolicy, QInputDialog)
-from PyQt5.QtGui import QCloseEvent
-import PyQtAds as QtAds
+from qtpy.QtGui import QCloseEvent
+
+try:
+    import PyQtAds as QtAds
+except (ImportError, NameError, Exception):
+    import PySide6QtAds as QtAds
 
     
 UI_FILE = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
-MainWindowUI, MainWindowBase = uic.loadUiType(UI_FILE)
+MainWindowUI, MainWindowBase = loadUiType(UI_FILE)
 
 
 class CMainWindow(MainWindowUI, MainWindowBase):
@@ -77,7 +81,7 @@ class CMainWindow(MainWindowUI, MainWindowBase):
         self.perspective_combo_box = QComboBox(self)
         self.perspective_combo_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.perspective_combo_box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.perspective_combo_box.activated[str].connect(self.dock_manager.openPerspective)
+        self.perspective_combo_box.activated[int].connect(self.dock_manager.openPerspective)
         perspective_list_action.setDefaultWidget(self.perspective_combo_box)
         self.toolBar.addSeparator()
         self.toolBar.addAction(perspective_list_action)
@@ -99,10 +103,11 @@ class CMainWindow(MainWindowUI, MainWindowBase):
         # that all top level windows of the dock manager are properly closed
         self.dock_manager.deleteLater()
         super().closeEvent(event)
-        
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     
     w = CMainWindow()
     w.show()
-    app.exec_()
+    app.exec()

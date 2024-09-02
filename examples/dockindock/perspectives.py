@@ -4,9 +4,10 @@ import shutil
 import atexit
 
 from qtpy.QtCore import Signal, QSettings, QObject
+
 try:
-    from PyQtAds import QtAds
-except ImportError:
+    import PyQtAds as QtAds
+except (ImportError, NameError, Exception):
     import PySide6QtAds as QtAds
 
 from dockindockmanager import DockInDockManager

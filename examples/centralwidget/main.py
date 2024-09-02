@@ -1,16 +1,16 @@
 import os
 import sys
 
-from PySide6.QtUiTools import loadUiType
-from qtpy.QtCore import Qt, QTimer, QDir, QSignalBlocker
-from qtpy.QtGui import QCloseEvent, QIcon
-from qtpy.QtWidgets import (QApplication, QLabel, QCalendarWidget, QFrame, QTreeView,
-                             QTableWidget, QFileSystemModel, QPlainTextEdit, QToolBar,
-                             QWidgetAction, QComboBox, QAction, QSizePolicy, QInputDialog)
+from qtpy.QtUiTools import loadUiType
+from qtpy.QtCore import QSignalBlocker
+from qtpy.QtGui import QCloseEvent, QAction
+from qtpy.QtWidgets import (QApplication,
+                            QTableWidget, QPlainTextEdit,
+                            QWidgetAction, QComboBox, QSizePolicy, QInputDialog)
 
 try:
-    from PyQtAds import QtAds
-except ImportError:
+    import PyQtAds as QtAds
+except (ImportError, NameError, Exception):
     import PySide6QtAds as QtAds
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
@@ -80,7 +80,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
         self.perspective_combobox = QComboBox(self)
         self.perspective_combobox.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.perspective_combobox.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.perspective_combobox.activated.connect(self.dock_manager.openPerspective)
+        self.perspective_combobox.activated[str].connect(self.dock_manager.openPerspective)
         perspective_list_action.setDefaultWidget(self.perspective_combobox)
         self.toolBar.addSeparator()
         self.toolBar.addAction(perspective_list_action)
@@ -107,4 +107,4 @@ if __name__ == '__main__':
     
     w = MainWindow()
     w.show()
-    app.exec_()
+    app.exec()
