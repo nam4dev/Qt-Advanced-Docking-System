@@ -1712,11 +1712,15 @@ void CDockContainerWidget::dropFloatingWidget(CFloatingDockContainer* FloatingWi
     ADS_PRINT("CDockContainerWidget::dropFloatingWidget");
 	CDockWidget* SingleDroppedDockWidget = FloatingWidget->topLevelDockWidget();
 	CDockWidget* SingleDockWidget = topLevelDockWidget();
+	int TabIndex = -2;
 	auto dropArea = InvalidDockWidgetArea;
 	auto ContainerDropArea = d->DockManager->containerOverlay()->dropAreaUnderCursor();
 	bool Dropped = false;
 
 	CDockAreaWidget* DockArea = dockAreaAt(TargetPos);
+
+//	Q_EMIT d->DockManager->dockWidgetDropped(FloatingWidget, ContainerDropArea, DockArea, TabIndex);
+
 	// mouse is over dock area
 	if (DockArea)
 	{
@@ -1732,7 +1736,7 @@ void CDockContainerWidget::dropFloatingWidget(CFloatingDockContainer* FloatingWi
 		if (dropArea != InvalidDockWidgetArea)
 		{
             ADS_PRINT("Dock Area Drop Content: " << dropArea);
-            int TabIndex = d->DockManager->dockAreaOverlay()->tabIndexUnderCursor();
+            TabIndex = d->DockManager->dockAreaOverlay()->tabIndexUnderCursor();
 			d->dropIntoSection(FloatingWidget, DockArea, dropArea, TabIndex);
 			Dropped = true;
 		}
@@ -1763,7 +1767,13 @@ void CDockContainerWidget::dropFloatingWidget(CFloatingDockContainer* FloatingWi
 	}
 
 	if (Dropped)
-	{ 
+	{
+        if (SingleDroppedDockWidget == nullptr) {
+		    Q_EMIT d->DockManager->dockWidgetDropped(FloatingWidget, ContainerDropArea, DockArea, TabIndex);
+		}
+		else {
+		    Q_EMIT d->DockManager->dockWidgetDropped(SingleDroppedDockWidget, ContainerDropArea, DockArea, TabIndex);
+		}
 		// Fix https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System/issues/351
 		FloatingWidget->finishDropOperation();
 
@@ -1809,6 +1819,8 @@ void CDockContainerWidget::dropWidget(QWidget* Widget, DockWidgetArea DropArea, 
 
 	window()->activateWindow();
 	d->DockManager->notifyWidgetOrAreaRelocation(Widget);
+
+	Q_EMIT d->DockManager->dockWidgetDropped(Widget, DropArea, TargetAreaWidget, TabIndex);
 }
 
 
@@ -1932,7 +1944,7 @@ bool CDockContainerWidget::restoreState(CDockingStateReader& s, bool Testing)
 		return true;
 	}
 
-	// If the root splitter is empty, rostoreChildNodes returns a 0 pointer
+	// If the root splitter is empty, restoreChildNodes returns a 0 pointer
 	// and we need to create a new empty root splitter
 	if (!NewRootSplitter)
 	{

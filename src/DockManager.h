@@ -34,7 +34,7 @@
 #include "DockContainerWidget.h"
 #include "DockWidget.h"
 #include "FloatingDockContainer.h"
-
+#include "DockComponentsFactory.h"
 
 QT_FORWARD_DECLARE_CLASS(QSettings)
 QT_FORWARD_DECLARE_CLASS(QMenu)
@@ -52,7 +52,6 @@ class CDockWidgetTab;
 struct DockWidgetTabPrivate;
 struct DockAreaWidgetPrivate;
 class CIconProvider;
-class CDockComponentsFactory;
 class CDockFocusController;
 class CAutoHideSideBar;
 class CAutoHideTab;
@@ -92,12 +91,13 @@ private:
 	friend CAutoHideTab;
 	friend AutoHideTabPrivate;
 
+    CDockComponentsFactory* m_factory;
+
 public Q_SLOTS:
 	/**
 	 * Ends the isRestoringFromMinimizedState
 	 */
 	void endLeavingMinimizedState();
-
 
 protected:
 	/**
@@ -215,6 +215,7 @@ public:
 		MiddleMouseButtonClosesTab = 0x2000000, //! If the flag is set, the user can use the mouse middle button to close the tab under the mouse
 		DisableTabTextEliding =      0x4000000, //! Set this flag to disable eliding of tab texts in dock area tabs
 		ShowTabTextOnlyForActiveTab =0x8000000, //! Set this flag to show label texts in dock area tabs only for active tabs
+		EnableFloatingAsWindow = 0x10000000, ///! Set this flag to manage the window minimize feature and to make any floatingcontainer acting as a real Window
 
         DefaultDockAreaButtons = DockAreaHasCloseButton
 							   | DockAreaHasUndockButton
@@ -252,7 +253,7 @@ public:
 		AutoHideSideBarsIconOnly = 0x10,///< show only icons in auto hide side tab - if a tab has no icon, then the text will be shown
 		AutoHideShowOnMouseOver = 0x20, ///< show the auto hide window on mouse over tab and hide it if mouse leaves auto hide container
 		AutoHideCloseButtonCollapsesDock = 0x40, ///< Close button of an auto hide container collapses the dock instead of hiding it completely
-		AutoHideHasCloseButton = 0x80, //< If the flag is set an auto hide title bar has a close button
+		AutoHideHasCloseButton = 0x80, ///< If the flag is set an auto hide title bar has a close button
 		AutoHideHasMinimizeButton = 0x100, ///< if this flag is set, the auto hide title bar has a minimize button to collapse the dock widget
 
 		DefaultAutoHideConfig = AutoHideFeatureEnabled
@@ -329,6 +330,9 @@ public:
 	 * styleheets for icons is not an option.
 	 */
 	static CIconProvider& iconProvider();
+
+	CDockComponentsFactory* getFactory();
+    void setFactory(CDockComponentsFactory* factory);
 
 	/**
 	 * Adds dockwidget into the given area.
@@ -778,6 +782,8 @@ Q_SIGNALS:
      * dock manager instance.
      */
     void dockWidgetAdded(ads::CDockWidget* DockWidget);
+
+    void dockWidgetDropped(QWidget* Widget, DockWidgetArea DropArea, CDockAreaWidget* TargetAreaWidget, int TabIndex);
 
     /**
      * This signal is emitted just before the given dock widget is removed

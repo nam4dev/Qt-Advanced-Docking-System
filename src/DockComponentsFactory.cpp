@@ -21,55 +21,23 @@
 
 namespace ads
 {
-static std::unique_ptr<CDockComponentsFactory> DefaultFactory(new CDockComponentsFactory());
 
+    CDockWidgetTab* CDockComponentsFactory::createDockWidgetTab(CDockWidget* DockWidget) {
+        return new CDockWidgetTab(DockWidget);
+    }
 
-//============================================================================
-CDockWidgetTab* CDockComponentsFactory::createDockWidgetTab(CDockWidget* DockWidget) const
-{
-	return new CDockWidgetTab(DockWidget);
-}
+    CAutoHideTab* CDockComponentsFactory::createDockWidgetSideTab(CDockWidget* DockWidget) {
+        return new CAutoHideTab(DockWidget);
+    }
 
-//============================================================================
-CAutoHideTab* CDockComponentsFactory::createDockWidgetSideTab(CDockWidget *DockWidget) const
-{
-	return new CAutoHideTab(DockWidget);
-}
+    CDockAreaTabBar* CDockComponentsFactory::createDockAreaTabBar(CDockAreaWidget* DockArea) {
+        return new CDockAreaTabBar(DockArea);
+    }
 
+    CDockAreaTitleBar* CDockComponentsFactory::createDockAreaTitleBar(CDockAreaWidget* DockArea) {
+        return new CDockAreaTitleBar(DockArea);
+    }
 
-//============================================================================
-CDockAreaTabBar* CDockComponentsFactory::createDockAreaTabBar(CDockAreaWidget* DockArea) const
-{
-	return new CDockAreaTabBar(DockArea);
-}
-
-
-//============================================================================
-CDockAreaTitleBar* CDockComponentsFactory::createDockAreaTitleBar(CDockAreaWidget* DockArea) const
-{
-	return new CDockAreaTitleBar(DockArea);
-}
-
-
-//============================================================================
-const CDockComponentsFactory* CDockComponentsFactory::factory()
-{
-	return DefaultFactory.get();
-}
-
-
-//============================================================================
-void CDockComponentsFactory::setFactory(CDockComponentsFactory* Factory)
-{
-	DefaultFactory.reset(Factory);
-}
-
-
-//============================================================================
-void CDockComponentsFactory::resetDefaultFactory()
-{
-	DefaultFactory.reset(new CDockComponentsFactory());
-}
 } // namespace ads
 
 //---------------------------------------------------------------------------

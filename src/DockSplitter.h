@@ -68,7 +68,7 @@ public:
 	QWidget* firstWidget() const;
 
 	/**
-	 * Returns last widget of nullptr is splitter is empty
+	 * Returns last widget or nullptr if splitter is empty
 	 */
 	QWidget* lastWidget() const;
 

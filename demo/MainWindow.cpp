@@ -81,7 +81,7 @@
 #include "DockAreaTitleBar.h"
 #include "DockAreaTabBar.h"
 #include "FloatingDockContainer.h"
-#include "DockComponentsFactory.h"
+// #include "DockComponentsFactory.h"
 #include "StatusDialog.h"
 #include "DockSplitter.h"
 #include "ImageViewer.h"
@@ -141,22 +141,22 @@ static QIcon svgIcon(const QString& File)
 
 
 //============================================================================
-class CCustomComponentsFactory : public ads::CDockComponentsFactory
-{
-public:
-	using Super = ads::CDockComponentsFactory;
-	ads::CDockAreaTitleBar* createDockAreaTitleBar(ads::CDockAreaWidget* DockArea) const override
-	{
-		auto TitleBar = new ads::CDockAreaTitleBar(DockArea);
-		auto CustomButton = new QToolButton(DockArea);
-		CustomButton->setToolTip(QObject::tr("Help"));
-		CustomButton->setIcon(svgIcon(":/adsdemo/images/help_outline.svg"));
-		CustomButton->setAutoRaise(true);
-		int Index = TitleBar->indexOf(TitleBar->button(ads::TitleBarButtonTabsMenu));
-		TitleBar->insertWidget(Index + 1, CustomButton);
-		return TitleBar;
-	}
-};
+// class CCustomComponentsFactory : public ads::CDockComponentsFactory
+// {
+// public:
+// 	using Super = ads::CDockComponentsFactory;
+// 	ads::CDockAreaTitleBar* createDockAreaTitleBar(ads::CDockAreaWidget* DockArea) const override
+// 	{
+// 		auto TitleBar = new ads::CDockAreaTitleBar(DockArea);
+// 		auto CustomButton = new QToolButton(DockArea);
+// 		CustomButton->setToolTip(QObject::tr("Help"));
+// 		CustomButton->setIcon(svgIcon(":/adsdemo/images/help_outline.svg"));
+// 		CustomButton->setAutoRaise(true);
+// 		int Index = TitleBar->indexOf(TitleBar->button(ads::TitleBarButtonTabsMenu));
+// 		TitleBar->insertWidget(Index + 1, CustomButton);
+// 		return TitleBar;
+// 	}
+// };
 
 
 
@@ -471,12 +471,12 @@ void MainWindowPrivate::createContent()
 	appendFeaturStringToWindowTitle(FileSystemWidget);
 
 	// Test custom factory - we inject a help button into the title bar
-	ads::CDockComponentsFactory::setFactory(new CCustomComponentsFactory());
+	// ads::CDockComponentsFactory::setFactory(new CCustomComponentsFactory());
 	auto TopDockArea = DockManager->addDockWidget(ads::TopDockWidgetArea, FileSystemWidget);
 	// Uncomment the next line if you would like to test the
 	// HideSingleWidgetTitleBar functionality
 	// TopDockArea->setDockAreaFlag(ads::CDockAreaWidget::HideSingleWidgetTitleBar, true);
-	ads::CDockComponentsFactory::resetDefaultFactory();
+	// ads::CDockComponentsFactory::resetDefaultFactory();
 
 	// We create a calendar widget and clear all flags to prevent the dock area
 	// from closing

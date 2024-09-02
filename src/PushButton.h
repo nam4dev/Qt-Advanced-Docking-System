@@ -32,12 +32,12 @@ public:
 
     using QPushButton::QPushButton;
 
-    virtual QSize sizeHint() const override;
+    [[nodiscard]] QSize sizeHint() const override;
 
     /**
      * Returns the current orientation
      */
-    Orientation buttonOrientation() const;
+    [[nodiscard]] Orientation buttonOrientation() const;
 
     /**
      * Set the orientation of this button
@@ -45,7 +45,7 @@ public:
     void setButtonOrientation(Orientation orientation);
 
 protected:
-    virtual void paintEvent(QPaintEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     Orientation m_Orientation = Horizontal;

@@ -45,6 +45,8 @@
 
 #include <iostream>
 
+#include "AutoHideDockContainer.h"
+
 namespace ads
 {
 static const int AutoHideAreaWidth = 32;
@@ -81,6 +83,7 @@ struct DockOverlayPrivate
 	 * The area where the mouse is considered in the sidebar
 	 */
 	int sideBarMouseZone(SideBarLocation sideBarLocation);
+	bool isContainerMinimized(CDockContainerWidget* containerWidget);
 };
 
 /**
@@ -133,12 +136,10 @@ struct DockOverlayCrossPrivate
 		default:
 			return QColor();
 		}
-
-		return QColor();
 	}
 
 	/**
-	 * Stylehseet based icon colors
+	 * Stylesheet based icon colors
 	 */
 	QColor iconColor(CDockOverlayCross::eIconColor ColorIndex)
 	{
@@ -156,7 +157,7 @@ struct DockOverlayCrossPrivate
      * Helper function that returns the drop indicator width depending on the
      * operating system
      */
-    qreal dropIndicatiorWidth(QLabel* l) const
+    qreal dropIndicatorWidth(QLabel* l) const
     {
     #if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
         Q_UNUSED(l)
@@ -174,7 +175,7 @@ struct DockOverlayCrossPrivate
 		QLabel* l = new QLabel();
 		l->setObjectName("DockWidgetAreaLabel");
 
-        qreal metric = dropIndicatiorWidth(l);
+        qreal metric = dropIndicatorWidth(l);
 		QSizeF size(metric, metric);
 		if (internal::isSideBarArea(DockWidgetArea))
         {
@@ -200,7 +201,7 @@ struct DockOverlayCrossPrivate
 	void updateDropIndicatorIcon(QWidget* DropIndicatorWidget)
 	{
 		QLabel* l = qobject_cast<QLabel*>(DropIndicatorWidget);
-        const qreal metric = dropIndicatiorWidth(l);
+        const qreal metric = dropIndicatorWidth(l);
 		const QSizeF size(metric, metric);
 
 		int Area = l->property("dockWidgetArea").toInt();
@@ -362,6 +363,14 @@ struct DockOverlayCrossPrivate
 	}
 
 };
+
+
+bool DockOverlayPrivate::isContainerMinimized(CDockContainerWidget* containerWidget = nullptr) {
+	if (containerWidget == nullptr) {
+		return false;
+	}
+	return containerWidget->floatingWidget() && containerWidget->floatingWidget()->isMinimized();
+}
 
 
 //============================================================================
@@ -552,6 +561,30 @@ DockWidgetArea CDockOverlay::visibleDropAreaUnderCursor() const
 //============================================================================
 DockWidgetArea CDockOverlay::showOverlay(QWidget* target)
 {
+	if(CDockManager::testConfigFlag(CDockManager::EnableFloatingAsWindow)) {
+		const CDockAreaWidget* areaWidget = dynamic_cast<CDockAreaWidget*>(target);
+		if (areaWidget) {
+			if (areaWidget->isMinimized()) {
+				return InvalidDockWidgetArea;
+			}
+			const CAutoHideDockContainer* autoHideDockContainer = areaWidget->autoHideDockContainer();
+			if (autoHideDockContainer) {
+				if (autoHideDockContainer->isMinimized()) {
+					return InvalidDockWidgetArea;
+				}
+				if (d->isContainerMinimized(autoHideDockContainer->dockContainer())) {
+					return InvalidDockWidgetArea;
+				}
+			}
+			if (d->isContainerMinimized(areaWidget->dockContainer())) {
+				return InvalidDockWidgetArea;
+			}
+		}
+		if (d->isContainerMinimized(dynamic_cast<CDockContainerWidget*>(target))) {
+			return InvalidDockWidgetArea;
+		}
+	}
+
 	if (d->TargetWidget == target)
 	{
 		// Hint: We could update geometry of overlay here.

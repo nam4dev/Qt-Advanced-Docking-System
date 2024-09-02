@@ -500,7 +500,7 @@ void DockManagerPrivate::addActionToMenu(QAction* Action, QMenu* Menu, bool Inse
 //============================================================================
 CDockManager::CDockManager(QWidget *parent) :
 	CDockContainerWidget(this, parent),
-	d(new DockManagerPrivate(this))
+	d(new DockManagerPrivate(this)), m_factory(new CDockComponentsFactory())
 {
 	createRootSplitter();
 	createSideTabBarWidgets();
@@ -540,6 +540,7 @@ CDockManager::CDockManager(QWidget *parent) :
 //============================================================================
 CDockManager::~CDockManager()
 {
+    delete m_factory;
     // fix memory leaks, see https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System/issues/307
 	std::vector<QPointer<ads::CDockAreaWidget>> areas;
 	for (int i = 0; i != dockAreaCount(); ++i)
@@ -673,6 +674,18 @@ bool CDockManager::eventFilter(QObject *obj, QEvent *e)
 	return Super::eventFilter(obj, e);
 }
 #endif
+
+
+CDockComponentsFactory* CDockManager::getFactory() {
+    return m_factory;
+}
+
+void CDockManager::setFactory(CDockComponentsFactory* factory) {
+    if (m_factory != factory) {
+        delete m_factory;
+        m_factory = factory;
+    }
+}
 
 
 //============================================================================

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(QtAdvancedDockingSystem LANGUAGES CXX VERSION ${VERSION_SHORT})
 include(GNUInstallDirs)
+set(CMAKE_PREFIX_PATH "%USERPROFILE%/dev/Qt/6.7.2/msvc2019_64/lib/cmake/Qt6")
 if (${QT_VERSION_MAJOR})
   message(STATUS "Forced to use Qt version ${QT_VERSION_MAJOR}")
   find_package(QT NAMES Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)

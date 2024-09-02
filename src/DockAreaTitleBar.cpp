@@ -262,7 +262,8 @@ void DockAreaTitleBarPrivate::createAutoHideTitleLabel()
 //============================================================================
 void DockAreaTitleBarPrivate::createTabBar()
 {
-	TabBar = componentsFactory()->createDockAreaTabBar(DockArea);
+//	TabBar = componentsFactory()->createDockAreaTabBar(DockArea);
+	TabBar = dockManager()->getFactory()->createDockAreaTabBar(DockArea);
     TabBar->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 	Layout->addWidget(TabBar);
 	_this->connect(TabBar, SIGNAL(tabClosed(int)), SLOT(markTabsMenuOutdated()));
@@ -743,11 +744,20 @@ void CDockAreaTitleBar::contextMenuEvent(QContextMenuEvent* ev)
 	{
 		return;
 	}
+	contextMenuHandler(ev);
+}
 
-	const bool isAutoHide = d->DockArea->isAutoHide();
+void CDockAreaTitleBar::contextMenuHandler(QContextMenuEvent* ev) {
+    contextMenuDefaultHandler(ev);
+}
+
+void CDockAreaTitleBar::contextMenuDefaultHandler(QContextMenuEvent* ev)
+{
+    const bool isAutoHide = d->DockArea->isAutoHide();
 	const bool isTopLevelArea = d->DockArea->isTopLevelArea();
 	QAction* Action;
 	QMenu Menu(this);
+
 	if (!isTopLevelArea)
 	{
 		Action = Menu.addAction(isAutoHide ? tr("Detach") : tr("Detach Group"),

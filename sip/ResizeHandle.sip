@@ -21,7 +21,7 @@ public:
 	CResizeHandle(Qt::Edge HandlePosition, QWidget* parent /TransferThis/);
 	virtual ~CResizeHandle();
 	void setHandlePosition(Qt::Edge HandlePosition);
-	Qt::Edge handlePostion() const;
+	Qt::Edge handlePosition() const;
 	Qt::Orientation orientation() const;
 	QSize sizeHint() const;
 	bool isResizing() const;

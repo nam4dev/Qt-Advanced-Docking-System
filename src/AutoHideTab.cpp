@@ -155,8 +155,7 @@ AutoHideTabPrivate::AutoHideTabPrivate(CAutoHideTab* _public) :
 //============================================================================
 void AutoHideTabPrivate::updateOrientation()
 {
-	bool IconOnly = CDockManager::testAutoHideConfigFlag(CDockManager::AutoHideSideBarsIconOnly);
-	if (IconOnly && !_this->icon().isNull())
+	if (_this->iconOnly())
 	{
 		_this->setText("");
 		_this->setOrientation(Qt::Horizontal);
@@ -260,6 +259,11 @@ CAutoHideTab::~CAutoHideTab()
 {
 	ADS_PRINT("~CDockWidgetSideTab()");
 	delete d;
+}
+
+void CAutoHideTab::updateOrientation() const
+{
+    d->updateOrientation();
 }
 
 

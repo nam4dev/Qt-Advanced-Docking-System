@@ -172,6 +172,11 @@ public:
 	 */
 	void setSize(int Size);
 
+	/*
+	* Provide the inner horizontal state of the container
+	*/
+	bool isHorizontal();
+
 	/**
 	 * Resets the width or height to the initial dock widget size dependinng on
 	 * the orientation.

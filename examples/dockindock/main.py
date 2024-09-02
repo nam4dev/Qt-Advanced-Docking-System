@@ -1,10 +1,12 @@
 import sys
-import os
 import atexit
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
-from PyQt5.QtCore import Qt
-import PyQtAds as QtAds
+from qtpy.QtWidgets import QApplication, QMainWindow, QLabel
+from qtpy.QtCore import Qt
+try:
+    from PyQtAds import QtAds
+except ImportError:
+    import PySide6QtAds as QtAds
 
 from perspectives import PerspectivesManager
 from dockindock import DockInDockWidget

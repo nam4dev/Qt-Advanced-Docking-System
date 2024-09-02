@@ -199,7 +199,8 @@ CAutoHideDockContainer::CAutoHideDockContainer(CDockWidget* DockWidget, SideBarL
 {
 	hide(); // auto hide dock container is initially always hidden
 	d->SideTabBarArea = area;
-	d->SideTab = componentsFactory()->createDockWidgetSideTab(nullptr);
+	d->SideTab = DockWidget->dockManager()->getFactory()->createDockWidgetSideTab(nullptr);
+//	d->SideTab = componentsFactory()->createDockWidgetSideTab(nullptr);
 	connect(d->SideTab, &CAutoHideTab::pressed, this, &CAutoHideDockContainer::toggleCollapseState);
 	d->DockArea = new CDockAreaWidget(DockWidget->dockManager(), parent);
 	d->DockArea->setObjectName("autoHideDockArea");
@@ -396,7 +397,7 @@ void CAutoHideDockContainer::moveContentsToParent()
 {
 	cleanupAndDelete();
 	// If we unpin the auto hide dock widget, then we insert it into the same
-	// location like it had as a auto hide widget.  This brings the least surprise
+	// location like it had as an auto hide widget.  This brings the least surprise
 	// to the user and he does not have to search where the widget was inserted.
 	d->DockWidget->setDockArea(nullptr);
 	auto DockContainer = dockContainer();
@@ -458,6 +459,7 @@ void CAutoHideDockContainer::toggleView(bool Enable)
 //============================================================================
 void CAutoHideDockContainer::collapseView(bool Enable)
 {
+    Q_EMIT d->DockWidget->aboutToCollapseView(Enable);
 	if (Enable)
 	{
 		hide();
@@ -475,6 +477,7 @@ void CAutoHideDockContainer::collapseView(bool Enable)
 
 	ADS_PRINT("CAutoHideDockContainer::collapseView " << Enable);
     d->SideTab->updateStyle();
+    Q_EMIT d->DockWidget->collapsedView(Enable);
 }
 
 
@@ -498,6 +501,12 @@ void CAutoHideDockContainer::setSize(int Size)
 	}
 
 	updateSize();
+}
+
+//============================================================================
+bool CAutoHideDockContainer::isHorizontal()
+{
+	return d->isHorizontal();
 }
 
 
@@ -588,20 +597,23 @@ bool CAutoHideDockContainer::eventFilter(QObject* watched, QEvent* event)
 		}
 
 		// user clicked into container - collapse the auto hide widget
+		// FIXME: below line make the auto hide component collapse on focus out into the container.
 		collapseView(true);
 	}
     else if (event->type() == internal::FloatingWidgetDragStartEvent)
     {
-    	// If we are dragging our own floating widget, the we do not need to
+    	// If we are dragging our own floating widget, then we do not need to
     	// collapse the view
     	auto FloatingWidget = dockContainer()->floatingWidget();
     	if (FloatingWidget != watched)
     	{
+    	    // FIXME: below line make the auto hide component collapse on focus out into the container.
     		collapseView(true);
     	}
     }
     else if (event->type() == internal::DockedWidgetDragStartEvent)
     {
+        // FIXME: below line make the auto hide component collapse on focus out into the container.
     	collapseView(true);
     }
 

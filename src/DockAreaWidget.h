@@ -119,7 +119,7 @@ protected:
 
 	/**
 	 * Add a new dock widget to dock area.
-	 * All dockwidgets in the dock area tabified in a stacked layout with tabs
+	 * All dock widgets in the dock area tabified in a stacked layout with tabs
 	 */
 	void addDockWidget(CDockWidget* DockWidget);
 
@@ -355,7 +355,7 @@ public:
 	/**
 	 * Returns the dock area flags - a combination of flags that configure the
 	 * appearance and features of the dock area.
-	 * \see setDockAreaFlasg()
+	 * \see setDockAreaFlags()
 	 */
 	DockAreaFlags dockAreaFlags() const;
 
@@ -424,6 +424,8 @@ public Q_SLOTS:
 	 * DockWidgetFloatable flag is true
 	 */
 	void setFloating();
+
+	SideBarLocation logicalSideTabBarArea() const;
 
 Q_SIGNALS:
 	/**

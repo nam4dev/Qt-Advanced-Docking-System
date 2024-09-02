@@ -31,6 +31,7 @@
 //                                   INCLUDES
 //============================================================================
 #include <QFrame>
+#include <QContextMenuEvent>
 
 #include "ads_globals.h"
 
@@ -162,7 +163,8 @@ public:
         NoTab = 0x080, ///< dock widget tab will never be shown if this flag is set
         DeleteContentOnClose = 0x100, ///< deletes only the contained widget on close, keeping the dock widget intact and in place. Attempts to rebuild the contents widget on show if there is a widget factory set.
         DockWidgetPinnable = 0x200, ///< dock widget can be pinned and added to an auto hide dock container
-        DefaultDockWidgetFeatures = DockWidgetClosable | DockWidgetMovable | DockWidgetFloatable | DockWidgetFocusable | DockWidgetPinnable,
+        HasContextMenuEventHandler = 0x400, ///< Allow to manage the context menu from the DockWidget
+        DefaultDockWidgetFeatures = DockWidgetClosable | DockWidgetMovable | DockWidgetFloatable | DockWidgetFocusable | DockWidgetPinnable | HasContextMenuEventHandler,
         AllDockWidgetFeatures = DefaultDockWidgetFeatures | DockWidgetDeleteOnClose | CustomCloseHandling,
         DockWidgetAlwaysCloseAndDelete = DockWidgetForceCloseWithArea | DockWidgetDeleteOnClose,
         GloballyLockableFeatures = DockWidgetClosable | DockWidgetMovable | DockWidgetFloatable | DockWidgetPinnable,
@@ -263,6 +265,8 @@ public:
      * Virtual Destructor
      */
     virtual ~CDockWidget();
+
+    virtual void contextMenuHandler(QContextMenuEvent* ev);
 
     /**
      * We return a fixed minimum size hint or the size hint of the content
@@ -580,7 +584,7 @@ public: // reimplements QFrame -----------------------------------------------
 public Q_SLOTS:
     /**
      * This property controls whether the dock widget is open or closed.
-     * The toogleViewAction triggers this slot
+     * The toggleViewAction triggers this slot
      */
     void toggleView(bool Open = true);
 
@@ -600,6 +604,11 @@ public Q_SLOTS:
      * 	This only applies if the dock widget is already open. If closed, does nothing.
      */
     void raise();
+
+    /**
+     * Alias or `raise()` for Python bindings
+     */
+    void setAsCurrentComponent();
 
     /**
      * This function will make a docked widget floating
@@ -671,6 +680,11 @@ Q_SIGNALS:
     void closed();
 
     /**
+     * This signal is emitted if the dock widget is pinned or unpinned
+     */
+    void pinned(bool pinnedState, SideBarLocation Location, int TabIndex);
+
+    /**
      * This signal is emitted if the window title of this dock widget
      * changed
      */
@@ -700,6 +714,16 @@ Q_SIGNALS:
      * The features parameter gives the new value of the property.
      */
     void featuresChanged(ads::CDockWidget::DockWidgetFeatures features);
+
+	/**
+	 * This signal is emitted when the container is collapsed
+	 */
+	void collapsedView(bool enable);
+
+	/**
+	 * This signal is emitted when the container is about to collapse
+	 */
+	void aboutToCollapseView(bool enable);
 }; // class DockWidget
 } // namespace ads
 

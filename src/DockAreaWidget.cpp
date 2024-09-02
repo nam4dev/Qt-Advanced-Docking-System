@@ -171,12 +171,12 @@ public:
 			return;
 		}
 
-		bool reenableUpdates = false;
+		bool enableUpdates = false;
 		QWidget *parent = m_ParentLayout->parentWidget();
 
 		if (parent && parent->updatesEnabled())
 		{
-			reenableUpdates = true;
+			enableUpdates = true;
 			parent->setUpdatesEnabled(false);
 		}
 
@@ -196,7 +196,7 @@ public:
 		m_CurrentWidget = next;
 
 
-		if (reenableUpdates)
+		if (enableUpdates)
 		{
 			parent->setUpdatesEnabled(true);
 		}
@@ -353,7 +353,8 @@ DockAreaWidgetPrivate::DockAreaWidgetPrivate(CDockAreaWidget* _public) :
 //============================================================================
 void DockAreaWidgetPrivate::createTitleBar()
 {
-	TitleBar = componentsFactory()->createDockAreaTitleBar(_this);
+//	TitleBar = componentsFactory()->createDockAreaTitleBar(_this);
+	TitleBar = DockManager->getFactory()->createDockAreaTitleBar(_this);
 	Layout->addWidget(TitleBar);
 	QObject::connect(tabBar(), &CDockAreaTabBar::tabCloseRequested, _this, &CDockAreaWidget::onTabCloseRequested);
 	QObject::connect(TitleBar, &CDockAreaTitleBar::tabBarClicked, _this, &CDockAreaWidget::setCurrentIndex);
@@ -583,11 +584,13 @@ void CDockAreaWidget::removeDockWidget(CDockWidget* DockWidget)
 		this->deleteLater();
 		if(DockContainer->dockAreaCount() == 0)
 		{
-			if(CFloatingDockContainer*  FloatingDockContainer = DockContainer->floatingWidget())
-			{
-				FloatingDockContainer->hide();
-				FloatingDockContainer->deleteLater();
-			}
+		// FIXME: Run configuration is deleted when the last tab is closed, commenting this part fixes it.
+		// FIXME: Ensure there will be no side effects.
+		// if(CFloatingDockContainer*  FloatingDockContainer = DockContainer->floatingWidget())
+		// {
+		// 	FloatingDockContainer->hide();
+		// 	FloatingDockContainer->deleteLater();
+		// }
 		}
 	}
 	else if (DockWidget == CurrentDockWidget)
@@ -768,7 +771,8 @@ int CDockAreaWidget::openDockWidgetsCount() const
 	int Count = 0;
 	for (int i = 0; i < d->ContentsLayout->count(); ++i)
 	{
-		if (dockWidget(i) && !dockWidget(i)->isClosed())
+		CDockWidget* DockWidget = dockWidget(i);
+		if (DockWidget && !DockWidget->isClosed())
 		{
 			++Count;
 		}
@@ -798,7 +802,8 @@ int CDockAreaWidget::indexOfFirstOpenDockWidget() const
 {
 	for (int i = 0; i < d->ContentsLayout->count(); ++i)
 	{
-		if (dockWidget(i) && !dockWidget(i)->isClosed())
+		CDockWidget* DockWidget = dockWidget(i);
+		if (DockWidget && !DockWidget->isClosed())
 		{
 			return i;
 		}
@@ -1326,6 +1331,11 @@ SideBarLocation CDockAreaWidget::calculateSideTabBarArea() const
 	}
 
 	return SideTab;
+}
+
+SideBarLocation CDockAreaWidget::logicalSideTabBarArea() const
+{
+    return calculateSideTabBarArea();
 }
 
 

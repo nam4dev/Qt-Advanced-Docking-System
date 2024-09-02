@@ -71,11 +71,11 @@ private Q_SLOTS:
 protected:
 	void setSideBar(CAutoHideSideBar *SideTabBar);
 	void removeFromSideBar();
-	virtual bool event(QEvent* event) override;
-	virtual void contextMenuEvent(QContextMenuEvent* ev) override;
-	virtual void mousePressEvent(QMouseEvent* ev) override;
-	virtual void mouseReleaseEvent(QMouseEvent* ev) override;
-	virtual void mouseMoveEvent(QMouseEvent* ev) override;
+	bool event(QEvent* event) override;
+	void contextMenuEvent(QContextMenuEvent* ev) override;
+	void mousePressEvent(QMouseEvent* ev) override;
+	void mouseReleaseEvent(QMouseEvent* ev) override;
+	void mouseMoveEvent(QMouseEvent* ev) override;
 
 public:
     using Super = CPushButton;
@@ -85,12 +85,12 @@ public:
 	 * param[in] DockWidget The dock widget this title bar belongs to
 	 * param[in] parent The parent widget of this title bar
 	 */
-	CAutoHideTab(QWidget* parent = nullptr);
+	explicit CAutoHideTab(QWidget* parent = nullptr);
 
 	/**
 	 * Virtual Destructor
 	 */
-	virtual ~CAutoHideTab();
+	~CAutoHideTab() override;
 
 	/**
 	 * Update stylesheet style if a property changes
@@ -100,7 +100,7 @@ public:
 	/**
 	 * Getter for side tab bar area property
 	 */
-	SideBarLocation sideBarLocation() const;
+	[[nodiscard]] SideBarLocation sideBarLocation() const;
 
 	/**
 	 * Set orientation vertical or horizontal
@@ -110,7 +110,7 @@ public:
 	/**
 	 * Returns the current orientation
 	 */
-	Qt::Orientation orientation() const;
+	[[nodiscard]] Qt::Orientation orientation() const;
 
 	/**
 	 * Returns true, if this is the active tab. The tab is active if the auto
@@ -121,7 +121,7 @@ public:
 	/**
 	 * returns the dock widget this belongs to
 	 */
-	CDockWidget* dockWidget() const;
+	[[nodiscard]] CDockWidget* dockWidget() const;
 
 	/**
 	 * Sets the dock widget that is controlled by this tab
@@ -132,18 +132,21 @@ public:
 	 * Returns true if the auto hide config flag AutoHideSideBarsIconOnly
 	 * is set and if the tab has an icon - that means the icon is not null
 	 */
-	bool iconOnly() const;
+	[[nodiscard]] bool iconOnly() const;
 
 	/**
 	 * Returns the side bar that contains this tab or a nullptr if the tab is
 	 * not in a side bar
 	 */
-	CAutoHideSideBar* sideBar() const;
+	[[nodiscard]] CAutoHideSideBar* sideBar() const;
 
 	/**
 	 * Returns the index of this tab in the sideBar
 	 */
 	int tabIndex() const;
+
+    // Override the setIcon method
+    void updateOrientation() const;
 
 public Q_SLOTS:
 	/**

@@ -1,3 +1,4 @@
+
 #ifndef DockAreaTitleBarH
 #define DockAreaTitleBarH
 /*******************************************************************************
@@ -172,6 +173,11 @@ public:
 	 * Virtual Destructor
 	 */
 	virtual ~CDockAreaTitleBar();
+
+
+	virtual void contextMenuHandler(QContextMenuEvent* ev);
+
+	void contextMenuDefaultHandler(QContextMenuEvent* ev);
 
 	/**
 	 * Returns the pointer to the tabBar()

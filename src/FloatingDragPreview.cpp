@@ -367,6 +367,9 @@ void CFloatingDragPreview::startFloating(const QPoint &DragStartMousePos,
 	Q_UNUSED(MouseEventHandler)
 	Q_UNUSED(DragState)
 	resize(Size);
+//	TODO: When commented, it allows to stick the dragged preview to the Mouse cursor.
+//  TODO: Allowing to make drag & drop on other widgets than the one(s) being dragged & dropped.
+//  TODO: Like toolbar icons - Ensure it has no side-effects.
 	d->DragStartMousePosition = DragStartMousePos;
 	moveFloating();
 	show();

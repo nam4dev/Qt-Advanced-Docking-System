@@ -55,7 +55,7 @@ public:
 	/**
 	 * Returns the handle position
 	 */
-	Qt::Edge handlePostion() const;
+	Qt::Edge handlePosition() const;
 
 	/**
 	 * Returns the orientation of this resize handle

@@ -248,7 +248,7 @@ void CResizeHandle::setHandlePosition(Qt::Edge HandlePosition)
 
 
 //============================================================================
-Qt::Edge CResizeHandle::handlePostion() const
+Qt::Edge CResizeHandle::handlePosition() const
 {
 	return d->HandlePosition;
 }

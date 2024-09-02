@@ -1,8 +1,8 @@
 /*
  * Default style sheet on Windows Platforms with focus highlighting flag enabled
  */
- 
- 
+
+
 /*****************************************************************************
  * CDockContainerWidget
  *****************************************************************************/
@@ -64,7 +64,7 @@ ads--CTitleBarButton {
 #detachGroupButton {
 	qproperty-icon: url(:/ads/images/detach-button.svg),
 		url(:/ads/images/detach-button-disabled.svg) disabled;
-	qproperty-iconSize: 16px;	
+	qproperty-iconSize: 16px;
 }
 
 
@@ -162,8 +162,8 @@ QScrollArea#dockWidgetScrollArea {
  * Styling of auto hide functionality
  *
  *****************************************************************************/
- 
- 
+
+
 /*****************************************************************************
  * CAutoHideTab
  *****************************************************************************/
