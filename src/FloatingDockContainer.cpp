@@ -467,6 +467,7 @@ static const char* windowsMessageString(int MessageId)
             return CDockManager::floatingContainersTitle();
         }
 
+#ifdef Q_OS_WIN
         /**
         * Use the dock manager toolbar style and icon size for the different states
         */
@@ -476,7 +477,7 @@ static const char* windowsMessageString(int MessageId)
          * Use the dock manager toolbar style and icon size for the different states
          */
         static void toFloatingWindow(HWND hwnd);
-
+#endif
         /**
          * Use the dock manager toolbar style and icon size for the different states
          */
@@ -484,20 +485,17 @@ static const char* windowsMessageString(int MessageId)
     };
 
     // struct FloatingDockContainerPrivate
-
-    void FloatingDockContainerPrivate::toDockedWindow(HWND hwnd) {
 #ifdef Q_OS_WIN
+    void FloatingDockContainerPrivate::toDockedWindow(HWND hwnd) {
         const LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
         SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle & ~WS_EX_APPWINDOW);
         SetWindowPos(hwnd,
                      nullptr, 0, 0, 0, 0,
                      SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED
         );
-#endif
     }
 
     void FloatingDockContainerPrivate::toFloatingWindow(HWND hwnd) {
-#ifdef Q_OS_WIN
         LONG_PTR style = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
 
         // Set window style to ensure it appears as a separate floating window
@@ -510,22 +508,24 @@ static const char* windowsMessageString(int MessageId)
         SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
 
         ShowWindow(hwnd, SW_SHOW); // Re-show the window to apply new styles
-#endif
     }
+#endif
 
     void FloatingDockContainerPrivate::manageFloatingWindow() const {
         if (CDockManager::testConfigFlag(CDockManager::EnableFloatingAsWindow)) {
             if (_this == nullptr) {
                 return;
             }
-            const auto hwnd = reinterpret_cast<HWND>(_this->winId());
             _this->setWindowFlags(
                     Qt::Window
                     | Qt::WindowSystemMenuHint
                     | Qt::WindowMinMaxButtonsHint
                     | Qt::WindowCloseButtonHint
                 );
+#ifdef Q_OS_WIN
+            const auto hwnd = reinterpret_cast<HWND>(_this->winId());
             toFloatingWindow(hwnd);
+#endif
         }
     }
 

@@ -4,12 +4,14 @@ os.environ['QT_QUICK_BACKEND'] = 'software'
 os.environ['QT_WEBENGINE_DISABLE_GPU'] = '1'
 
 import sys
-import win32con
-import win32gui
 
-from qtpy.QtUiTools import loadUiType
-import win32con
-import win32gui
+try:
+    import win32con
+    import win32gui
+except (ImportError, NameError, Exception):
+    win32con = None
+    win32gui = None
+
 from qtpy.QtUiTools import loadUiType
 from qtpy import QtCore
 from qtpy import QtGui
@@ -25,6 +27,7 @@ except (ImportError, NameError, Exception):
 
 UI_FILE = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
 MainWindowUI, MainWindowBase = loadUiType(UI_FILE)
+Qt = QtCore.Qt
 
 
 class MainWindow(MainWindowUI, MainWindowBase):
@@ -34,7 +37,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
         self._hwnd = None
 
         self.setupUi(self)
- 
+
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.eConfigFlag.OpaqueSplitterResize, True)
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.eConfigFlag.XmlCompressionEnabled, False)
         QtAds.CDockManager.setConfigFlag(QtAds.CDockManager.eConfigFlag.FocusHighlighting, True)
@@ -62,7 +65,7 @@ class MainWindow(MainWindowUI, MainWindowBase):
         container = self.dock_manager.addAutoHideDockWidget(QtAds.SideBarLocation.SideBarLeft, table_dock_widget)
         container.setSize(480)
         self.menuView.addAction(table_dock_widget.toggleViewAction())
-        
+
         table = QtWidgets.QTableWidget()
         table.setColumnCount(5)
         table.setRowCount(1020)
@@ -82,7 +85,8 @@ class MainWindow(MainWindowUI, MainWindowBase):
         properties_dock_widget.setMinimumSizeHintMode(QtAds.CDockWidget.MinimumSizeHintFromDockWidget)
         properties_dock_widget.resize(250, 150)
         properties_dock_widget.setMinimumSize(200, 150)
-        self.dock_manager.addDockWidget(QtAds.DockWidgetArea.RightDockWidgetArea, properties_dock_widget, central_dock_area)
+        self.dock_manager.addDockWidget(QtAds.DockWidgetArea.RightDockWidgetArea, properties_dock_widget,
+                                        central_dock_area)
         self.menuView.addAction(properties_dock_widget.toggleViewAction())
 
         # Initialize QWebEngineView
@@ -95,7 +99,8 @@ class MainWindow(MainWindowUI, MainWindowBase):
 
         self.webview_dock_widget = QtAds.CDockWidget("Web Viewer")
         self.webview_dock_widget.setWidget(self.browser)
-        self.webview_dock_widget.setMinimumSizeHintMode(QtAds.CDockWidget.eMinimumSizeHintMode.MinimumSizeHintFromDockWidget)
+        self.webview_dock_widget.setMinimumSizeHintMode(
+            QtAds.CDockWidget.eMinimumSizeHintMode.MinimumSizeHintFromDockWidget)
         self.webview_dock_widget.resize(600, 300)
         self.webview_dock_widget.setMinimumSize(600, 300)
 
@@ -131,17 +136,18 @@ class MainWindow(MainWindowUI, MainWindowBase):
             | Qt.WindowType.WindowCloseButtonHint
         )
 
-        # # Set window style to ensure it appears as a separate floating window
-        # style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
-        # style |= win32con.WS_OVERLAPPEDWINDOW
-        # win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
+        if win32con and win32gui:
+            # # Set window style to ensure it appears as a separate floating window
+            # style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
+            # style |= win32con.WS_OVERLAPPEDWINDOW
+            # win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
 
-        # Set extended window style to ensure it gets its own taskbar entry
-        style = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
-        win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, style | win32con.WS_EX_APPWINDOW)
+            # Set extended window style to ensure it gets its own taskbar entry
+            style = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
+            win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, style | win32con.WS_EX_APPWINDOW)
 
-        # Re-show the window to apply new styles
-        win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
+            # Re-show the window to apply new styles
+            win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
 
     def create_perspective_ui(self):
         save_perspective_action = QtWidgets.QAction("Create Perspective", self)
