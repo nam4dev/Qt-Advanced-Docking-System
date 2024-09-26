@@ -11,7 +11,7 @@ try:
 except (ImportError, NameError, Exception):
     import PySide6QtAds as QtAds
 
-UI_FILE = os.path.join(os.path.dirname(__file__), 'MainWindow.ui')
+UI_FILE = os.path.join(os.path.dirname(__file__), "MainWindow.ui")
 MainWindowUI, MainWindowBase = loadUiType(UI_FILE)
 
 
@@ -21,16 +21,16 @@ class MainWindow(MainWindowUI, MainWindowBase):
         super().__init__(parent)
 
         self.setupUi(self)
- 
+
         # Create the dock manager. Because the parent parameter is a QMainWindow
         # the dock manager registers itself as the central widget.
         self.dock_manager = QtAds.CDockManager(self)
-        
+
         # Create example content label - this can be any application specific
         # widget
         l = QLabel()
         l.setWordWrap(True)
-        l.setAlignment(Qt.AlignTop | Qt.AlignLeft);
+        l.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         l.setText("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ")
 
         # Create a dock widget with the title Label 1 and set the created label
@@ -46,9 +46,9 @@ class MainWindow(MainWindowUI, MainWindowBase):
         self.dock_manager.addDockWidget(QtAds.TopDockWidgetArea, dock_widget)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
-    
+
     w = MainWindow()
     w.show()
     app.exec()
